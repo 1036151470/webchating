@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-theme.min.css">
+    <script src="/jquery-3.1.1.min.js"></script>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<script type="text/javascript" language="javascript">
+    var str = '';
+    var online='';
+    $(document).ready(function () {
+        setInterval("startRequest()", 100);
+        setInterval("getmessages()", 100);
+        setInterval("getonline()", 100);
+    });
+    function startRequest() {
+        $.ajax({
+            url : "/sendadress",
+            type : "get",
+            async : true
+        });
+    }
+
+    function getmessages() {
+        $.getJSON("/getmessages", function (result) {
+            $.each(result, function (i, field) {
+                str += '来自： <<'+field.adress+'>>';
+                str += field.context;
+            });
+        });
+        $("#forcontext").html(str);
+        str = '';
+    }
+
+    function getonline() {
+        $.getJSON("/getadress", function (result) {
+            $.each(result, function (i, field) {
+                online += '来自： <<'+field+'>>'+'</br>';
+            });
+        });
+        $("#foronline").html(online);
+        online = '';
+    }
+
+
+</script>
+
+
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-10 column">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">即时聊天留言面板</h3>
+            </div>
+            <div class="panel-body">
+
+                <div id="forcontext" style="text-align: left;">
+
+                </div>
+
+                <form action="/sendmessages" method="post">
+                    <div class="form-group">
+                        <div class="form-group has-warning">
+                            <input name="context" type="text" class="form-control" id="inputWarning" placeholder="回车输入">
+                            </br>
+                            <div style="text-align: right;">
+                                <label class="control-label" for="inputWarning">输入内容</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+
+        <div class="col-md-2 column">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">当前在线人员</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="foronline" style="text-align: left;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
