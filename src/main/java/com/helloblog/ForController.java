@@ -22,7 +22,10 @@ public class ForController {
     @GetMapping("/sendadress")
     @ResponseBody
     public void sendadress(HttpServletRequest request) {
-        Strlist.map.put(request.getLocalAddr(), request.getLocalAddr());
+        synchronized (Strlist.map) {
+
+            Strlist.map.put(request.getLocalAddr(), request.getLocalAddr());
+        }
     }
 
     @GetMapping("/getadress")
