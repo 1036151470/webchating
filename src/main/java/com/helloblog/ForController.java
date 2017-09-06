@@ -15,23 +15,23 @@ import java.util.Random;
 public class ForController {
 
     @Scheduled(fixedRate = 2000)
-    public void cleanonline(){
+    public void cleanonline() {
         Strlist.map.clear();
     }
 
     @GetMapping("/sendadress")
     @ResponseBody
-    public void sendadress(HttpServletRequest request){
-        Strlist.map.put(request.getLocalAddr(),request.getLocalAddr());
+    public void sendadress(HttpServletRequest request) {
+        Strlist.map.put(request.getLocalAddr(), request.getLocalAddr());
     }
 
     @GetMapping("/getadress")
     @ResponseBody
-    public String getadress(){
+    public String getadress() {
 
         ArrayList<String> list = new ArrayList<>();
 
-        for (String s:Strlist.map.keySet()){
+        for (String s : Strlist.map.keySet()) {
             list.add(s);
         }
 
@@ -42,20 +42,24 @@ public class ForController {
 
     @PostMapping("/sendmessages")
     public String sendmessage(String context, HttpServletRequest request) {
-        if (Strlist.list.size()>=6){
-            Strlist.list.remove(0);
+        synchronized (Strlist.list) {
+
+
+            if (Strlist.list.size() >= 6) {
+                Strlist.list.remove(0);
+            }
+            ArrayList<String> list = new ArrayList<>();
+            Random random = new Random();
+
+            list.add("<div class=\"alert alert-info\">");
+            list.add("<div class=\"alert alert-success\">");
+            list.add("<div class=\"alert alert-warning\">");
+
+            Pojo pojo = new Pojo();
+            pojo.setAdress(request.getLocalAddr());
+            pojo.setContext(list.get(random.nextInt(list.size())) + context + "</div>");
+            Strlist.list.add(pojo);
         }
-        ArrayList<String> list = new ArrayList<>();
-        Random random = new Random();
-
-        list.add("<div class=\"alert alert-info\">");
-        list.add("<div class=\"alert alert-success\">");
-        list.add("<div class=\"alert alert-warning\">");
-
-        Pojo pojo = new Pojo();
-        pojo.setAdress(request.getLocalAddr());
-        pojo.setContext(list.get(random.nextInt(list.size()))+context + "</div>");
-        Strlist.list.add(pojo);
         return "redirect:/";
     }
 
